@@ -23,7 +23,7 @@
 }
 
 .pp-modal {
-    position: relative;
+    position: absolute;
     width: auto;
     margin: 0 auto;
     top: 30px;
@@ -31,12 +31,13 @@
 }
 
 .pp-modal-content {
-    position: relative;
+    position: absolute;
     background-color: #fff;
     border: 0;
     border-radius: 4px;
     background-clip: padding-box;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+    cursor: move;
 }
 
 .pp-modal-header {
