@@ -1,0 +1,9 @@
+{
+  "name": "jsnativeplugins-panel",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/faithdong/jsnativeplugins-panel.git",
+  "author": "sven",
+  "license": "MIT",
+  "private": false
+}
