@@ -145,6 +145,7 @@
     } else if (window.datachEvent) {
       ele.datachEvent("on" + eventType, func);
     }
+    
   };
 
 
