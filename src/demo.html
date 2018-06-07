@@ -222,10 +222,15 @@
             handle = handle || oDrag;
             handle.style.cursor = "move";
             handle.onmousedown = function(event) {
+                console.log('鼠标 坐标点：' + event.clientX + '----' + event.clientY);
+                console.log('被拖拽div 偏移量：' + oDrag.offsetLeft + '----' + oDrag.offsetTop);
                 var event = event || window.event;
                 disX = event.clientX - oDrag.offsetLeft;
                 disY = event.clientY - oDrag.offsetTop;
+                console.log('disX---：' + disX  + '---disY---：' + disY);
                 document.onmousemove = function(event) {
+                    console.log('鼠标 坐标点：' + event.clientX + '----' + event.clientY);
+                    console.log('被拖拽div 偏移量：' + oDrag.offsetLeft + '----' + oDrag.offsetTop);
                     var event = event || window.event;
                     var iL = event.clientX - disX;
                     var iT = event.clientY - disY;
@@ -237,7 +242,7 @@
                     iT >= maxT && (iT = maxT);
                     oDrag.style.left = iL + "px";
                     oDrag.style.top = iT + "px";
-                    return false
+                    //return false
                 };
                 document.onmouseup = function() {
                     document.onmousemove = null;
@@ -335,6 +340,7 @@
             var oTR = get.byClass("resizeTR", oDrag)[0];
             var oBR = get.byClass("resizeBR", oDrag)[0];
             var oLB = get.byClass("resizeLB", oDrag)[0];
+            debugger;
             drag(oDrag, oTitle);
             //四角
             resize(oDrag, oLT, true, true, false, false);
