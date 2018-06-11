@@ -23,6 +23,8 @@
     document.body.innerHTML = strHtml;
     this.drag();
     this.close();
+    this.minPanel();
+    this.revertPanel();
   };
 
   /**
@@ -34,13 +36,15 @@
       //'<div class="pp-modal-wrap" >'
       //'<div class="pp-modal" id="ppmodal" style="width: 500px; transform-origin: -30px 431px 0px;">'
       '<div class="pp-modal-content" id="targetEle">'
-      + '<button aria-label="Close" class="pp-modal-close" ><span class="pp-modal-close-x">-</span></button>'
-      + '<button aria-label="Close" class="pp-modal-close" id="closebtn"><span class="pp-modal-close-x">X</span></button>'
+      //+ '<button aria-label="Close" class="pp-modal-close" id="maxbtn" style="right:36px;"><span class="pp-modal-close-x"><a class="min" href="javascript:;" title="最大化"><img src="./images/max.png"/></a></span></button>'
+      + '<button aria-label="Close" class="pp-modal-close" id="minbtn" style="right:36px;top:5px"><span class="pp-modal-close-x"><a href="javascript:;" title="最小化"><img src="./images/min.png"/></a></span></button>'
+      //+ '<button aria-label="Close" class="pp-modal-close" id="revertbtn" style="right:70px;top:5px"><span class="pp-modal-close-x"><img src="./images/revert.png"/></span></button>'
+      + '<button aria-label="Close" class="pp-modal-close" id="closebtn"><span class="pp-modal-close-x"><a  href="javascript:;" title="关闭"><img src="./images/close.png"/></a></span></button>'
       + '<div class="pp-modal-header" id="dragEle"><div class="pp-modal-title" id="rcDialogTitle2">弹框拖动插件</div></div>'
       + '<div class="pp-modal-body">'
       + '<div class="pp-scale">'
       + '<div class="pp-card pp-card-bordered" id="normalimgdiv">'
-      + '<img alt="example" width="100% " style="vertical-align: middle; height: 350px;" src="./images/img1.jpg" >'
+      + '<img alt="example" width="100% " style="vertical-align: middle; height: 350px;" src="./images/img3.jpg" >'
       + '</div>'
       + '<div class="pp-card">'
       + '</div>'
@@ -56,7 +60,7 @@
 
 
   /**
-   * 删除
+   * 关闭
    */
   DragPanel.prototype.close = function () {
     var closebtn = document.getElementById('closebtn');
@@ -66,6 +70,26 @@
     }
   };
 
+  /**
+   * 最小化
+   */
+  DragPanel.prototype.minPanel = function(){
+    var minbnt = document.getElementById('minbtn');
+    minbtn.onclick = function(){
+      var minStrHtml = '<div class="min">'
+      +'<button aria-label="Close" class="pp-modal-close" id="revertbtn" style="right:0px;top:5px"><span class="pp-modal-close-x"><a href="javascript:;" title="还原"><img src="./images/revert.png"/></a></span></button>'
+      +'</div>';
+      document.body.innerHTML = minStrHtml;
+    }
+  };
+
+  DragPanel.prototype.revertPanel = function(){
+    var revertbtn = document.getElementById('revertbtn');
+    revertbtn.onclick = function(){
+      var strHtml = createPicMagnifier();
+      document.body.innerHTML = strHtml;
+    }
+  };
 
   /**
    * 拖拽
@@ -76,79 +100,48 @@
 
     var dragParams = {
       left: 0,
-      top: 0,
-      currentX: 0,
-      currentY: 0
+      top: 0
     };
 
     dragEle.onmousedown = function (e) {
       e.preventDefault();
       var e = e ? e : window.event;
-      //1、获取拖拽窗口的偏移量
+      //1、获取拖拽窗口的偏移量（被拖拽DIV的坐标位置）
       dragParams.left = targetEle.offsetLeft;
       dragParams.top = targetEle.offsetTop;
-      //2、获取当前鼠标坐标点
-      dragParams.currentX = e.clientX;
-      dragParams.currentY = e.clientY;
-      document.body.onmousemove = function (e) {
+      //2、计算当前被拖拽DIV的坐标位置 与 鼠标坐标位置之间的距离
+      var diffX = e.clientX - dragParams.left;
+      var diffY = e.clientY - dragParams.top;
+      document.onmousemove = function (e) {
         e.preventDefault();
         var e = e ? e : window.event;
-        console.log('鼠标坐标：'+ e.clientX + '---' + e.clientY);
-        var nowX = e.clientX;
-        var nowY = e.clientY;
-        var diffX = nowX - dragParams.currentX;
-        var diffY = nowY - dragParams.currentY; 
-        var maxTop = document.body.offsetHeight - targetEle.offsetHeight,
-        maxLeft = document.body.offsetWidth - targetEle.offsetWidth;
-        if (dragParams.top < 0) dragParams.top = 0;
-        if (dragParams.top > maxTop) top = maxTop;
-        if (dragParams.left < 0) dragParams.left = 0;
-        if (dragParams.left > maxLeft) dragParams.left = maxLeft;
-        var left = parseInt(diffX + dragParams.left);
-        var top = parseInt(diffY + dragParams.top);
-        targetEle.style.left = left + "px";
-        targetEle.style.top = top + "px";
+        console.log('鼠标坐标：' + e.clientX + '---' + e.clientY);
+        //1、被拖拽的距离坐标点
+        var beMoveDistanceX = e.clientX - diffX;
+        var beMoveDistanceY = e.clientY - diffY;
+        var maxL = document.documentElement.clientWidth - targetEle.offsetWidth;
+        var maxT = document.documentElement.clientHeight - targetEle.offsetHeight;
+        //2、不让div超出浏览器窗口（不会出现滚动条）
+        beMoveDistanceX <= 0 && (beMoveDistanceX = 0);
+        beMoveDistanceY <= 0 && (beMoveDistanceY = 0);
+        beMoveDistanceX >= maxL && (beMoveDistanceX = maxL);
+        beMoveDistanceY >= maxT && (beMoveDistanceY = maxT);
+        //最终拖拽坐标点
+        targetEle.style.left = beMoveDistanceX + 'px';
+        targetEle.style.top = beMoveDistanceY + 'px';
+
       };
 
-      document.body.onmouseup = function (e) {
-        document.body.onmousemove = null;
-        document.body.onmouseup = null;
+      document.onmouseup = function (e) {
+        document.onmousemove = null;
+        document.onmouseup = null;
+        this.releaseCapture && this.releaseCapture()
       };
+      this.setCapture && this.setCapture();
+      return false;
     };
 
   };
-
-
-  /**
-   * 添加绑定事件函数，兼容智障IE浏览器
-   * @param {Element} ele 需要添加绑定事件的元素对象
-   * @param {string} eventType  必须。字符串，指定事件名
-   * @param {function} func 事件触发时执行的函数
-   */
-  var bindEventFunc = function (ele, eventType, func) {
-    if (window.addEventListener) {
-      ele.addEventListener(eventType, func, false);
-    } else if (window.attachEvent) {
-      ele.attachEvent("on" + eventType, func); //兼容智障IE浏览器
-    }
-  };
-
-  /**
-   * 移除绑定事件函数，兼容智障IE浏览器
-   * @param {Element} ele 删除绑定事件的元素对象
-   * @param {string} eventType  事件名
-   * @param {function} func 事件触发时执行的函数
-   */
-  var removeEvenFunc = function (ele, eventType, func) {
-    if (window.removeEventListener) {
-      ele.removeEventListener(eventType, func, false);
-    } else if (window.datachEvent) {
-      ele.datachEvent("on" + eventType, func);
-    }
-    
-  };
-
-
 
 
   //3、将插件对象暴露给全局对象

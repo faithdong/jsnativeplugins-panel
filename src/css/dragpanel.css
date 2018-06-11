@@ -125,8 +125,8 @@
     border: 0;
     background: transparent;
     position: absolute;
-    right: 16px;
-    top: 16px;
+    right: 3px;
+    top: 10px;
     z-index: 10;
     font-weight: 700;
     line-height: 1;
@@ -144,8 +144,8 @@
     text-align: center;
     text-transform: none;
     text-rendering: auto;
-    width: 14px;
-    height: 14px;
+    width: 32px;
+    height: 32px;
     font-size: 14px;
     line-height: 1;
 }
@@ -175,3 +175,22 @@
     margin: 0px;
     /* border: 1px solid #e9e9e9; */
 }
+
+
+/**最小化样式begin */
+
+.min {
+    position: fixed;
+    width: 100px;
+    height: 32px;
+    right: 5px;
+    bottom: 150px;
+    background: #108ee9;
+    transition: .3s;
+    box-shadow: 0 0 6px rgba(0, 0, 0, .12);
+    z-index: 5;
+    top: 5px;
+}
+
+
+/** 最小化样式结束*/
