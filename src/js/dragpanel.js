@@ -51,6 +51,9 @@
       + '</div>'
       + '</div>'
       + '</div>'
+      +'<div class="min" style="display:none" id="revertwin">'
+      +'<button aria-label="Close" class="pp-modal-close" id="revertbtn" style="right:0px;top:5px"><span class="pp-modal-close-x"><a href="javascript:;" title="还原"><img src="./images/revert.png"/></a></span></button>'
+      +'</div>';
     // + '</div>'
     // + '</div>'
     // + '</div>';
@@ -64,9 +67,11 @@
    */
   DragPanel.prototype.close = function () {
     var closebtn = document.getElementById('closebtn');
+    var revertwin = document.getElementById('revertwin');
     closebtn.onclick = function (e) {
       var drag = document.getElementById('targetEle');
       targetEle.remove();
+      revertwin.remove();
     }
   };
 
@@ -74,20 +79,24 @@
    * 最小化
    */
   DragPanel.prototype.minPanel = function(){
-    var minbnt = document.getElementById('minbtn');
+    var targetEle = document.getElementById('targetEle');
+    var revertwin = document.getElementById('revertwin');
     minbtn.onclick = function(){
-      var minStrHtml = '<div class="min">'
-      +'<button aria-label="Close" class="pp-modal-close" id="revertbtn" style="right:0px;top:5px"><span class="pp-modal-close-x"><a href="javascript:;" title="还原"><img src="./images/revert.png"/></a></span></button>'
-      +'</div>';
-      document.body.innerHTML = minStrHtml;
+      targetEle.style.display = 'none';
+      revertwin.style.display = 'block';
     }
   };
 
+  /**
+   * 窗口还原
+   */
   DragPanel.prototype.revertPanel = function(){
     var revertbtn = document.getElementById('revertbtn');
+    var targetEle = document.getElementById('targetEle');
+    var revertwin = document.getElementById('revertwin');
     revertbtn.onclick = function(){
-      var strHtml = createPicMagnifier();
-      document.body.innerHTML = strHtml;
+      targetEle.style.display = 'block';
+      revertwin.style.display = 'none';
     }
   };
 
