@@ -1,34 +1,4 @@
-.pp-modal-mask {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    /* background-color: #373737; */
-    background-color: rgba(55, 55, 55, .6);
-    height: 100%;
-    z-index: 1000;
-}
-
-.pp-modal-wrap {
-    position: fixed;
-    overflow: auto;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 2000;
-    outline: 0;
-    cursor: move;
-}
-
-.pp-modal {
-    position: absolute;
-    width: auto;
-    margin: 0 auto;
-    top: 30px;
-    padding-bottom: 24px;
-}
+/** 模态框样式 begin*/
 
 .pp-modal-content {
     position: absolute;
@@ -56,9 +26,6 @@
 
 .pp-modal-footer {
     border-top: 1px solid #e9e9e9;
-    /* padding: 10px 16px 10px 10px;
-    text-align: right;
-    border-radius: 0 0 4px 4px; */
     height: 128px;
     overflow: hidden;
     box-shadow: 0 4px 8px 0 rgba(7, 17, 27, .1);
@@ -140,7 +107,6 @@
 .pp-modal-close-x {
     display: block;
     font-style: normal;
-    /* vertical-align: baseline; */
     text-align: center;
     text-transform: none;
     text-rendering: auto;
@@ -173,8 +139,10 @@
 .pp-card-body {
     padding: 0px;
     margin: 0px;
-    /* border: 1px solid #e9e9e9; */
 }
+
+
+/** 模态框样式 end*/
 
 
 /**最小化样式begin */
@@ -194,3 +162,86 @@
 
 
 /** 最小化样式结束*/
+
+
+/** 可拖动边框样式 begin*/
+
+#targetEle .resizeL,
+#targetEle .resizeT,
+#targetEle .resizeR,
+#targetEle .resizeB,
+#targetEle .resizeLT,
+#targetEle .resizeTR,
+#targetEle .resizeLB {
+    position: absolute;
+    background: #000;
+    overflow: hidden;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+#targetEle .resizeL,
+#targetEle .resizeR {
+    top: 0;
+    width: 5px;
+    height: 100%;
+    cursor: w-resize;
+}
+
+#targetEle .resizeR {
+    right: 0;
+}
+
+#targetEle .resizeT,
+#targetEle .resizeB {
+    width: 100%;
+    height: 5px;
+    cursor: n-resize;
+}
+
+#targetEle .resizeT {
+    top: 0;
+}
+
+#targetEle .resizeB {
+    bottom: 0;
+}
+
+#targetEle .resizeLT,
+#targetEle .resizeTR,
+#targetEle .resizeLB {
+    width: 8px;
+    height: 8px;
+    background: #FF0;
+}
+
+#targetEle .resizeLT {
+    top: 0;
+    left: 0;
+    cursor: nw-resize;
+}
+
+#targetEle .resizeTR {
+    top: 0;
+    right: 0;
+    cursor: ne-resize;
+}
+
+#targetEle .resizeLB {
+    left: 0;
+    bottom: 0;
+    cursor: ne-resize;
+}
+
+#targetEle .resizeBR {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    cursor: nw-resize;
+}
+
+
+/** 可拖动边框样式 end*/

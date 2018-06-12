@@ -25,6 +25,7 @@
     this.close();
     this.minPanel();
     this.revertPanel();
+    this.resizePanel();
   };
 
   /**
@@ -36,6 +37,14 @@
       //'<div class="pp-modal-wrap" >'
       //'<div class="pp-modal" id="ppmodal" style="width: 500px; transform-origin: -30px 431px 0px;">'
       '<div class="pp-modal-content" id="targetEle">'
+      +'<div class="resizeL"></div>'
+      +'<div class="resizeR"></div>'
+      +'<div class="resizeT"></div>'
+      +'<div class="resizeB"></div>'
+      +'<div class="resizeLT"></div>'
+      +'<div class="resizeTR"></div>'
+      +'<div class="resizeBR"></div>'
+      +'<div class="resizeLB"></div>'
       //+ '<button aria-label="Close" class="pp-modal-close" id="maxbtn" style="right:36px;"><span class="pp-modal-close-x"><a class="min" href="javascript:;" title="最大化"><img src="./images/max.png"/></a></span></button>'
       + '<button aria-label="Close" class="pp-modal-close" id="minbtn" style="right:36px;top:5px"><span class="pp-modal-close-x"><a href="javascript:;" title="最小化"><img src="./images/min.png"/></a></span></button>'
       //+ '<button aria-label="Close" class="pp-modal-close" id="revertbtn" style="right:70px;top:5px"><span class="pp-modal-close-x"><img src="./images/revert.png"/></span></button>'
@@ -144,12 +153,103 @@
       document.onmouseup = function (e) {
         document.onmousemove = null;
         document.onmouseup = null;
-        this.releaseCapture && this.releaseCapture()
+        this.releaseCapture && this.releaseCapture();
       };
       this.setCapture && this.setCapture();
       return false;
     };
 
+  };
+
+  /**
+   * 改变div大小
+   */
+  DragPanel.prototype.resizePanel = function(){
+    var targetEle = document.getElementById('targetEle');
+    //四个边
+    var resizeL = document.querySelector('#targetEle .resizeL');
+    var resizeT = document.querySelector('#targetEle .resizeT');
+    var resizeR = document.querySelector('#targetEle .resizeR');
+    var resizeB = document.querySelector('#targetEle .resizeB');
+    //四个角
+    var resizeLT = document.querySelector('#targetEle .resizeLT');
+    var resizeTR = document.querySelector('#targetEle .resizeTR');
+    var resizeLB = document.querySelector('#targetEle .resizeLB');
+    var resizeBR = document.querySelector('#targetEle .resizeBR');
+
+    //四边拖动 div
+    resizeDiv(targetEle,resizeL,true,false,false,true);
+    resizeDiv(targetEle,resizeT,false,true,true,false);
+    resizeDiv(targetEle,resizeR,false,false,false,true);
+    resizeDiv(targetEle,resizeB,false,false,true,false);
+
+    //四角拖动 div
+    resizeDiv(targetEle,resizeLT,true,true,false,false);
+    resizeDiv(targetEle,resizeTR,false,true,false,false);
+    resizeDiv(targetEle,resizeLB,true,false,false,false);
+    resizeDiv(targetEle,resizeBR,false,false,false,false);
+
+    //初始化设置 div 的位置
+    targetEle.style.left = (document.documentElement.clientWidth - targetEle.offsetWidth) / 2 + "px";
+    targetEle.style.top = (document.documentElement.clientHeight - targetEle.offsetHeight) / 2 + "px";
+  };
+
+  /**
+   * 拖动 div  四边和四角改变 div 宽度和高度
+   * @param {Element} parentEle 父级Div
+   * @param {Element} beMoveEle 触发拖动的元素
+   * @param {boolean} isLeft 是否左边
+   * @param {boolean} isTop 是否顶部
+   * @param {boolean} lockX 是否锁定 X 轴
+   * @param {boolean} lockY 是否锁定 Y 轴
+   */
+  var resizeDiv = function(parentEle,beMoveEle,isLeft,isTop,lockX,lockY){
+    //默认宽度和高度
+    var dragMinWidth = 499;
+    var dragMinHeight = 404;
+    beMoveEle.onmousedown = function(e){
+      //鼠标按下的坐标点 减去 边框的偏移量 等于 鼠标到边框的坐标位置(宽度，高度)
+      var diffX = e.clientX - beMoveEle.offsetLeft;
+      var diffY = e.clientY - beMoveEle.offsetTop;
+      //获取父级div width , height, top ,left
+      var parentEleWidth = parentEle.offsetWidth;
+      var parentEleHeight = parentEle.offsetHeight;
+      var parentEleTop = parentEle.offsetTop;
+      var parentEleLeft = parentEle.offsetLeft;
+      document.onmousemove = function(e){
+        //1、计算鼠标移动的坐标点(实际上就是移动的宽度和高度)
+        var beMoveDistanceX = e.clientX - diffX;
+        var beMoveDistanceY = e.clientY - diffY;
+        //2、计算可拖动div在浏览器中最大宽度和最大高度 
+        var maxWidth = document.documentElement.clientWidth - parentEle.offsetLeft - 2;
+        var maxHeight = document.documentElement.clientHeight - parentEle.offsetTop - 2;
+        var beMoveDistanceWidth = isLeft ? parentEleWidth - beMoveDistanceX : beMoveEle.offsetWidth + beMoveDistanceX;
+        var beMoveDistanceHeight = isTop ? parentEleHeight - beMoveDistanceY : beMoveEle.offsetHeight + beMoveDistanceY;
+        //3、不让拖动的的宽度和高度超出浏览器的宽度和高度
+        beMoveDistanceX > maxWidth && (beMoveDistanceWidth = maxWidth);
+        beMoveDistanceY > maxHeight && (beMoveDistanceHeight = maxHeight);
+        //4、如果拖动左边框或者顶部边框，需要给div设置left，top
+        isLeft && (parentEle.style.left = parentEleLeft + beMoveDistanceX + "px");
+        isTop && (parentEle.style.top = parentEleTop + beMoveDistanceY + "px");
+        //5、拖动的 div 不能超过默认设置div 的宽度和高度
+        beMoveDistanceWidth < dragMinWidth && (beMoveDistanceWidth = dragMinWidth);
+        beMoveDistanceWidth > maxWidth && (beMoveDistanceWidth = maxWidth);
+        lockX || (parentEle.style.width = beMoveDistanceWidth + "px");
+        //parentEle.style.width = beMoveDistanceWidth + "px";
+        beMoveDistanceHeight < dragMinHeight && (beMoveDistanceHeight = dragMinHeight);
+        beMoveDistanceHeight > maxHeight && (beMoveDistanceHeight = maxHeight);
+        lockY || (parentEle.style.height = beMoveDistanceHeight + "px");
+        //parentEle.style.height = beMoveDistanceHeight + "px";
+        //6、如果拖动的距离等于默认最小的宽度和高度就不在执行，如果不判断的话，鼠标可以一直拖动；不让鼠标拖动位置超出浏览器的宽度和高度
+        if ((isLeft && beMoveDistanceWidth == dragMinWidth) || (isTop && beMoveDistanceHeight == dragMinHeight) || (isTop && e.clientY == 0) ) document.onmousemove = null;
+        return false;
+      };
+
+      document.onmouseup = function(e){
+        document.onmousemove = null;
+        document.onmouseup = null;
+      }
+    }
   };
 
 
